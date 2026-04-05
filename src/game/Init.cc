@@ -84,6 +84,12 @@ try
 			ApologizeOverrideAndForceUpdateEverything();
 		}
 	}
+	SLOGI(">>> TACTICAL ONLY MODE <<<");
+
+	extern void LoadSavedGame(const ST::string & name);
+	LoadSavedGame("2026-03-18t14-13-55z-i-opiat-drassen");
+
+	return GAME_SCREEN;
 
 	switch (GameMode::getInstance()->getMode())
 	{
