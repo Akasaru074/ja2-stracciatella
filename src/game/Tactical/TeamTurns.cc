@@ -16,6 +16,7 @@
 #include "TeamTurns.h"
 #include "Smell.h"
 #include "Game_Clock.h"
+#include "SandboxInit.h"
 #include "GameSettings.h"
 #include "Queen_Command.h"
 #include "PathAI.h"
@@ -38,6 +39,7 @@
 #include "Debug.h"
 #include "Items.h"
 #include "Logger.h"
+#include "SandboxInit.h"
 
 // for that single policy check :|
 #include "GamePolicy.h"
@@ -47,6 +49,7 @@
 #include <string_theory/format>
 #include <string_theory/string>
 
+static void EndTurnEvents(void);
 #include <algorithm>
 #include <iterator>
 
@@ -86,7 +89,10 @@ void StartPlayerTeamTurn( BOOLEAN fDoBattleSnd, BOOLEAN fEnteringCombatMode )
 	// PATCH 1.06:
 	//
 	// make sure set properly in gTacticalStatus:
-	gTacticalStatus.ubCurrentTeam = OUR_TEAM;
+	if (!gfSandboxMode || gTacticalStatus.ubCurrentTeam != ENEMY_TEAM)
+	{
+		gTacticalStatus.ubCurrentTeam = OUR_TEAM;
+	}
 
 	InitPlayerUIBar( FALSE );
 
@@ -106,9 +112,23 @@ void StartPlayerTeamTurn( BOOLEAN fDoBattleSnd, BOOLEAN fEnteringCombatMode )
 		if (sel != NULL)
 		{
 			// Check if this guy is able to be selected....
-			if (sel->bLife < OKLIFE)
+			if (sel->bLife < OKLIFE || sel->bTeam != gTacticalStatus.ubCurrentTeam)
 			{
-				SelectNextAvailSoldier(sel);
+				if (sel->bTeam != gTacticalStatus.ubCurrentTeam)
+				{
+					FOR_EACH_IN_TEAM(s, gTacticalStatus.ubCurrentTeam)
+					{
+						if (OkControllableMerc(s))
+						{
+							SelectSoldier(s, SELSOLDIER_NONE);
+							break;
+						}
+					}
+				}
+				else
+				{
+					SelectNextAvailSoldier(sel);
+				}
 				sel = GetSelectedMan();
 			}
 
@@ -219,6 +239,15 @@ void EndTurn( UINT8 ubNextTeam )
 			{
 				s->sFinalDestination=s->sGridNo;
 				s->fNoAPToFinishMove = 0;
+			}
+		}
+
+		if (gfSandboxMode)
+		{
+			ubNextTeam = (gTacticalStatus.ubCurrentTeam == OUR_TEAM) ? ENEMY_TEAM : OUR_TEAM;
+			if (ubNextTeam == OUR_TEAM)
+			{
+				EndTurnEvents();
 			}
 		}
 
@@ -340,7 +369,7 @@ void BeginTeamTurn( UINT8 ubTeam )
 
 
 
-		if (ubTeam == OUR_TEAM )
+		if (ubTeam == OUR_TEAM || (gfSandboxMode && ubTeam == ENEMY_TEAM))
 		{
 			// ATE: Check if we are still in a valid battle...
 			// ( they could have blead to death above )
@@ -1504,8 +1533,6 @@ void DoneAddingToIntList(void)
 		StartInterrupt();
 	}
 }
-
-
 void ResolveInterruptsVs( SOLDIERTYPE * pSoldier, UINT8 ubInterruptType)
 {
 	UINT8 ubIntCnt;

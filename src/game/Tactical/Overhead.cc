@@ -10,6 +10,7 @@
 #include "ContentMusic.h"
 #include "Debug.h"
 #include "Dialogue_Control.h"
+#include "SandboxInit.h"
 #include "Drugs_And_Alcohol.h"
 #include "End_Game.h"
 #include "Event_Pump.h"
@@ -4396,6 +4397,13 @@ BOOLEAN CheckForEndOfBattle( BOOLEAN fAnEnemyRetreated )
 	BOOLEAN fBattleWon = TRUE;
 	BOOLEAN fBattleLost = FALSE;
 	UINT16  usAnimState;
+
+	if (gfSandboxMode)
+	{
+		// In Sandbox mode, we don't care about winning/losing the battle and we lack the 
+		// strategic layer initialization (like gMineStatus) required to safely end it.
+		return FALSE;
+	}
 
 	if ( gTacticalStatus.bBoxingState == BOXING )
 	{

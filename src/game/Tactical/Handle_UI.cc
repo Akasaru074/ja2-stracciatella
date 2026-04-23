@@ -58,6 +58,7 @@
 #include "LOS.h"
 #include "Campaign_Types.h"
 #include "Queen_Command.h"
+#include "SandboxInit.h"
 #include "Options_Screen.h"
 #include "SaveLoadScreen.h"
 #include "Spread_Burst.h"
@@ -4855,7 +4856,7 @@ BOOLEAN HandleTalkInit(  )
 
 void SetUIBusy(const SOLDIERTYPE* const s)
 {
-	if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.ubCurrentTeam == OUR_TEAM))
+	if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)))
 	{
 		if (s == GetSelectedMan())
 		{
@@ -4868,7 +4869,7 @@ void SetUIBusy(const SOLDIERTYPE* const s)
 
 void UnSetUIBusy(const SOLDIERTYPE* const s)
 {
-	if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.ubCurrentTeam == OUR_TEAM ))
+	if ((gTacticalStatus.uiFlags & INCOMBAT) && (gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)))
 	{
 		if ( !gTacticalStatus.fUnLockUIAfterHiddenInterrupt )
 		{

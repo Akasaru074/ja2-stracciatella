@@ -10,6 +10,10 @@
 #include "Soldier_Profile.h"
 #include "TeamTurns.h"
 
+#include "TeamTurns.h"
+
+extern bool gfSandboxMode;
+
 static inline bool RPC_RECRUITED(SOLDIERTYPE const* const s)
 {
 	UINT8 const pid = s->ubProfile;
@@ -54,7 +58,7 @@ static inline BOOLEAN OkControllableMerc(const SOLDIERTYPE* const s)
 	Assert(s->bActive);
 	return s->bLife >= OKLIFE &&
 		s->bInSector &&
-		s->bTeam == OUR_TEAM &&
+		(s->bTeam == OUR_TEAM || (gfSandboxMode && s->bTeam == ENEMY_TEAM)) &&
 		s->bAssignment < ON_DUTY;
 }
 #define OK_CONTROLLABLE_MERC(s)	((s)->bActive && OkControllableMerc((s)))

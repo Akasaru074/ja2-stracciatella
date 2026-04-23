@@ -117,7 +117,7 @@ ScreenID ErrorScreenHandle(void)
 ScreenID InitScreenHandle(void)
 {
 	static UINT32 splashDisplayedMoment = 0;
-	static UINT8					ubCurrentScreen = 255;
+	static UINT8					ubCurrentScreen = 1;
 
 	if ( ubCurrentScreen == 255 )
 	{

@@ -20,6 +20,7 @@
 
 #include "ContentManager.h"
 #include "GameInstance.h"
+#include "SandboxInit.h"
 
 #include <string_theory/format>
 
@@ -233,6 +234,8 @@ void SetMeanwhileSceneSeen(UINT8 const meanwhile_id)
 
 BOOLEAN	CanGameBeSaved()
 {
+	if (gfSandboxMode) return FALSE;
+
 	//if the iron man mode is on
 	if( gGameOptions.ubGameSaveMode == DIF_IRON_MAN )
 	{

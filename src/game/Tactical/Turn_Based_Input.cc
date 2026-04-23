@@ -5,6 +5,7 @@
 #include "TileDat.h"
 #include "Turn_Based_Input.h"
 #include "JAScreens.h"
+#include "SandboxInit.h"
 #include "PathAI.h"
 #include "Soldier_Control.h"
 #include "Animation_Control.h"
@@ -1435,7 +1436,7 @@ static void HandleModNone(UINT32 const key, UIEventKind* const new_event)
 		case 'd':
 			// End turn only if in combat and it is the player's turn
 			if ((gTacticalStatus.uiFlags & INCOMBAT) &&
-				gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
+				(gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)) &&
 				// Nothing in hand and the Done button for whichever panel we're in must be enabled
 				!gpItemPointer &&
 				!gfDisableTacticalPanelButtons &&
@@ -2006,7 +2007,7 @@ static void HandleModAltCheats(UINT32 const key, UIEventKind * const new_event)
 
 		case 'd':
 			if 	((gTacticalStatus.uiFlags & INCOMBAT) &&
-				gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
+				(gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)) &&
 				// Nothing in hand and the Done button for whichever panel we're in must be enabled
 				!gpItemPointer &&
 				!gfDisableTacticalPanelButtons &&

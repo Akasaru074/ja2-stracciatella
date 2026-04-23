@@ -58,6 +58,7 @@
 #include "Squads.h"
 #include "Strategic.h"
 #include "StrategicMap.h"
+#include "SandboxInit.h"
 #include "SysUtil.h"
 #include "Text.h"
 #include "Timer_Control.h"
@@ -633,7 +634,7 @@ static void UpdateSMPanel()
 		FindFenceJumpDirection(&s);
 	EnableButton(iSMPanelButtons[CLIMB_BUTTON], enable_climb);
 
-	EnableButton(iSMPanelButtons[SM_DONE_BUTTON], gTacticalStatus.ubCurrentTeam == OUR_TEAM && gTacticalStatus.uiFlags & INCOMBAT);
+	EnableButton(iSMPanelButtons[SM_DONE_BUTTON], (gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)) && gTacticalStatus.uiFlags & INCOMBAT);
 
 	SetButtonState(UPDOWN_BUTTON, gsInterfaceLevel > 0);
 
@@ -2620,7 +2621,7 @@ void SetTEAMPanelCurrentMerc(void)
 
 static void UpdateTEAMPanel(void)
 {
-	EnableButton(iTEAMPanelButtons[TEAM_DONE_BUTTON], gTacticalStatus.ubCurrentTeam == OUR_TEAM &&
+	EnableButton(iTEAMPanelButtons[TEAM_DONE_BUTTON], (gTacticalStatus.ubCurrentTeam == OUR_TEAM || (gfSandboxMode && gTacticalStatus.ubCurrentTeam == ENEMY_TEAM)) &&
 			gTacticalStatus.uiFlags & INCOMBAT);
 
 	EnableButton(iTEAMPanelButtons[TEAM_MAP_SCREEN_BUTTON], !(gTacticalStatus.uiFlags & ENGAGED_IN_CONV));

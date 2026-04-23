@@ -37,6 +37,7 @@
 #include "Vehicles.h"
 #include "Logger.h"
 #include "JAScreens.h"
+#include "SandboxInit.h"
 
 //The sector information required for the strategic AI.  Contains the number of enemy troops,
 //as well as intentions, etc.
@@ -246,6 +247,8 @@ static bool IsAnyOfTeamOKInSector(INT8 const team)
 
 void EndTacticalBattleForEnemy()
 {
+	if (gfSandboxMode) return;
+
 	// Clear enemies in battle for all stationary groups in the sector
 	if (gWorldSector.z == 0)
 	{
@@ -555,6 +558,8 @@ static void PrepareEnemyForUndergroundBattle()
 //The queen AI layer must process the event by subtracting forces, etc.
 void ProcessQueenCmdImplicationsOfDeath(const SOLDIERTYPE* const pSoldier)
 {
+	if (gfSandboxMode) return;
+
 	EvaluateDeathEffectsToSoldierInitList(*pSoldier);
 
 	switch( pSoldier->ubProfile )

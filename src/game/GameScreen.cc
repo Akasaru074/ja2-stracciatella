@@ -12,6 +12,7 @@
 #include "VObject_Blitters.h"
 #include "Button_System.h"
 #include "RenderWorld.h"
+#include "SandboxInit.h"
 #include "Sys_Globals.h"
 #include "Environment.h"
 #include "Bullets.h"
@@ -197,6 +198,8 @@ void EnterTacticalScreen(void)
 
 void LeaveTacticalScreen(ScreenID const uiNewScreen)
 {
+	if (gfSandboxMode && uiNewScreen == MAP_SCREEN) return;
+
 	guiTacticalLeaveScreenID = uiNewScreen;
 	guiTacticalLeaveScreen = TRUE;
 }
@@ -271,11 +274,11 @@ ScreenID MainGameScreenHandle(void)
 	//DO NOT MOVE THIS FUNCTION CALL!!!
 	//This determines if the help screen should be active
 //	if( ( !gfTacticalDoHeliRun && !gfFirstHeliRun ) && ShouldTheHelpScreenComeUp( HELP_SCREEN_TACTICAL, FALSE ) )
-	if( !gfPreBattleInterfaceActive && ShouldTheHelpScreenComeUp( HELP_SCREEN_TACTICAL, FALSE ) )
+	if( FALSE ) // !gfPreBattleInterfaceActive && ShouldTheHelpScreenComeUp( HELP_SCREEN_TACTICAL, FALSE ) )
 	{
 		// handle the help screen
-		HelpScreenHandler();
-		return( GAME_SCREEN );
+		// HelpScreenHandler();
+		// return( GAME_SCREEN );
 	}
 
 
@@ -446,7 +449,7 @@ ScreenID MainGameScreenHandle(void)
 	}
 	else if (!gfEnteringMapScreen)
 	{
-		gfEnteringMapScreen = TRUE;
+		// gfEnteringMapScreen = TRUE;
 	}
 
 	// Deque all game events

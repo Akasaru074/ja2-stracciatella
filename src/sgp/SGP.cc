@@ -398,7 +398,7 @@ int main(int argc, char* argv[])
 		SLOGD("Initializing Video Surface Manager");
 		InitializeVideoSurfaceManager();
 
-		InitJA2SplashScreen();
+		// InitJA2SplashScreen();
 
 		SLOGD("Initializing Sound Manager");
 		InitializeSoundManager();

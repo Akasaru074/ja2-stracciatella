@@ -35,7 +35,7 @@
 #include "Civ_Quotes.h"
 #include "Quests.h"
 #include "Queen_Command.h"
-
+#include "SandboxInit.h"
 
 constexpr milliseconds AI_DELAY = 100ms;
 
@@ -85,6 +85,13 @@ static void TurnBasedHandleNPCAI(SOLDIERTYPE* pSoldier);
 
 void HandleSoldierAI( SOLDIERTYPE *pSoldier )
 {
+	// In sandbox mode, the ENEMY_TEAM is fully controlled by the player via the UI.
+	// Bypassing AI completely avoids deadlocks and hourglass timeouts.
+	if (gfSandboxMode && pSoldier->bTeam == ENEMY_TEAM)
+	{
+		return;
+	}
+
 	// ATE
 	// Bail if we are engaged in a NPC conversation/ and/or sequence ... or we have a pause because
 	// we just saw someone... or if there are bombs on the bomb queue

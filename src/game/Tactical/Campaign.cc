@@ -1196,7 +1196,7 @@ UINT8 CurrentPlayerProgressPercentage(void)
 	UINT16 usControlProgress;
 
 
-	if( gfEditMode )
+	if( gfEditMode || gfSandboxMode )
 		return 0;
 
 	// figure out the player's current mine income

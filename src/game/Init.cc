@@ -24,6 +24,7 @@
 #include "Shading.h"
 #include "VSurface.h"
 #include "GameMode.h"
+#include "SandboxInit.h"
 
 #include "EditScreen.h"
 #include "Logger.h"
@@ -78,7 +79,7 @@ try
 	if(GameMode::getInstance()->isEditorMode())
 	{
 		//UNCOMMENT NEXT LINE TO ALLOW FORCE UPDATES...
-		//LoadGlobalSummary();
+		// LoadGlobalSummary();
 		if( gfMustForceUpdateAllMaps )
 		{
 			ApologizeOverrideAndForceUpdateEverything();
@@ -102,7 +103,9 @@ editor:
 			gGameOptions.fGunNut     = TRUE;
 			return GAME_SCREEN;
 
-		default: return INIT_SCREEN;
+		default:
+			InitMultiplayerSandbox();
+			return GAME_SCREEN;
 	}
 }
 catch (const std::runtime_error& ex)
