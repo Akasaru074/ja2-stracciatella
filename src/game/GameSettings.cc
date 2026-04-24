@@ -233,6 +233,7 @@ void SetMeanwhileSceneSeen(UINT8 const meanwhile_id)
 
 BOOLEAN	CanGameBeSaved()
 {
+	return FALSE;
 	//if the iron man mode is on
 	if( gGameOptions.ubGameSaveMode == DIF_IRON_MAN )
 	{
