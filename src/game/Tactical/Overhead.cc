@@ -4041,18 +4041,7 @@ void EnterCombatMode( UINT8 ubStartingTeam )
 
 void ExitCombatMode( )
 {
-	static bool tacticalTestMode = false;
-
-	if (!tacticalTestMode)
-	{
-		tacticalTestMode = true;
-		SLOGI("TACTICAL TEST MODE: ExitCombatMode will be blocked");
-	}
-
-	if (tacticalTestMode)
-	{
-		return;
-	}
+	//return;
 
 	SLOGD("Exiting combat mode" );
 

@@ -1,4 +1,5 @@
 #include "LoadSaveData.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "Timer_Control.h"
 #include "Types.h"
 #include "Soldier_Control.h"
@@ -181,6 +182,10 @@ static void EndInterrupt(BOOLEAN fMarkInterruptOccurred);
 
 void EndTurn( UINT8 ubNextTeam )
 {
+	if (TwoPlayerTest::IsActive()) {
+		TwoPlayerTest::OnEndTurn();
+		return;
+	}
 	//Check for enemy pooling (add enemies if there happens to be more than the max in the
 	//current battle.  If one or more slots have freed up, we can add them now.
 

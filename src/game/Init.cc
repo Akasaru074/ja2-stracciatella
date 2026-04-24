@@ -24,7 +24,7 @@
 #include "Shading.h"
 #include "VSurface.h"
 #include "GameMode.h"
-
+#include "Tactical/TwoPlayerTest.h"
 #include "EditScreen.h"
 #include "Logger.h"
 
@@ -87,8 +87,8 @@ try
 	SLOGI(">>> TACTICAL ONLY MODE <<<");
 
 	extern void LoadSavedGame(const ST::string & name);
-	LoadSavedGame("2026-03-18t14-13-55z-i-opiat-drassen");
-
+	LoadSavedGame("2026-04-23t05-02-18z-testovyi-seiv");
+	TwoPlayerTest::Init();
 	return GAME_SCREEN;
 
 	switch (GameMode::getInstance()->getMode())
