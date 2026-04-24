@@ -3231,7 +3231,12 @@ void RenderTownIDString(void)
 void CheckForAndAddMercToTeamPanel(SOLDIERTYPE* const s)
 {
 	if (!s->bActive) return;
-	if (s->bTeam != OUR_TEAM) return;
+	
+	if (gfSandboxMode) {
+		if (s->bTeam != gTacticalStatus.ubCurrentTeam) return;
+	} else {
+		if (s->bTeam != OUR_TEAM) return;
+	}
 
 	// Are we in the loaded sector?
 	if (s->sSector == gWorldSector && !s->fBetweenSectors && s->bInSector)

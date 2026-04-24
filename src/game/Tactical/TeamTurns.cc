@@ -40,6 +40,7 @@
 #include "Items.h"
 #include "Logger.h"
 #include "SandboxInit.h"
+#include "Interface_Panels.h"
 
 // for that single policy check :|
 #include "GamePolicy.h"
@@ -92,6 +93,15 @@ void StartPlayerTeamTurn( BOOLEAN fDoBattleSnd, BOOLEAN fEnteringCombatMode )
 	if (!gfSandboxMode || gTacticalStatus.ubCurrentTeam != ENEMY_TEAM)
 	{
 		gTacticalStatus.ubCurrentTeam = OUR_TEAM;
+	}
+
+	if (gfSandboxMode)
+	{
+		RemoveAllPlayersFromSlot();
+		FOR_EACH_IN_TEAM(s, gTacticalStatus.ubCurrentTeam)
+		{
+			CheckForAndAddMercToTeamPanel(s);
+		}
 	}
 
 	InitPlayerUIBar( FALSE );
