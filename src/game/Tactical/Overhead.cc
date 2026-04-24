@@ -3985,6 +3985,8 @@ void CommonEnterCombatModeCode( )
 
 void EnterCombatMode( UINT8 ubStartingTeam )
 {
+	ubStartingTeam = OUR_TEAM;
+
 	if ( gTacticalStatus.uiFlags & INCOMBAT )
 	{
 		SLOGD("Can't enter combat when already in combat" );

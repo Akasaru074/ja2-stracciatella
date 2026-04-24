@@ -181,6 +181,43 @@ static void EndInterrupt(BOOLEAN fMarkInterruptOccurred);
 
 void EndTurn( UINT8 ubNextTeam )
 {
+	INT32 currentSquad = CurrentSquad();
+	INT32 otherSquad = -1;
+	for (INT32 i = 0; i < NUMBER_OF_SQUADS; i++) {
+		if (i == currentSquad) continue;
+		if (IsSquadOnCurrentTacticalMap(i)) {
+			otherSquad = i;
+			break;
+		}
+	}
+
+	if (otherSquad != -1) {
+		SOLDIERTYPE* merc1 = Squad[currentSquad][0];	
+		SOLDIERTYPE* merc2 = Squad[otherSquad][0];
+
+		if (merc1 && merc2) {
+			merc1->bTeam = ENEMY_TEAM;
+			merc1->bSide = Side::ENEMY;
+
+			merc2->bTeam = OUR_TEAM;
+			merc2->bSide = Side::FRIENDLY;
+			merc2->bAssignment = otherSquad; 
+
+			RemoveManFromTeam(OUR_TEAM);
+			AddManToTeam(ENEMY_TEAM);
+			AddManToTeam(OUR_TEAM);
+
+			SetCurrentSquad(otherSquad, FALSE);
+
+			merc2->bActionPoints = merc2->bInitialActionPoints;
+			SelectSoldier(merc2, SELSOLDIER_NONE);
+
+			RebuildCurrentSquad();
+		}
+
+		return;
+	}
+
 	//Check for enemy pooling (add enemies if there happens to be more than the max in the
 	//current battle.  If one or more slots have freed up, we can add them now.
 

@@ -77,8 +77,6 @@ try
 
 	if(GameMode::getInstance()->isEditorMode())
 	{
-		//UNCOMMENT NEXT LINE TO ALLOW FORCE UPDATES...
-		//LoadGlobalSummary();
 		if( gfMustForceUpdateAllMaps )
 		{
 			ApologizeOverrideAndForceUpdateEverything();
@@ -87,8 +85,23 @@ try
 	SLOGI(">>> TACTICAL ONLY MODE <<<");
 
 	extern void LoadSavedGame(const ST::string & name);
-	LoadSavedGame("2026-03-18t14-13-55z-i-opiat-drassen");
-
+	LoadSavedGame("2026-04-23t05-02-18z-testovyi-seiv");
+	FOR_EACH_IN_TEAM(s, OUR_TEAM) {
+		if (s->bInSector) {
+			SOLDIERTYPE* enemy = NULL;
+			FOR_EACH_IN_TEAM(s2, OUR_TEAM) {
+				if (s2 != s && s2->bInSector) {
+					enemy = s2;
+					break;
+				}
+			}
+			if (enemy) {
+				enemy->bTeam = ENEMY_TEAM;
+				enemy->bSide = Side::ENEMY;
+			}
+			break;
+		}
+	}
 	return GAME_SCREEN;
 
 	switch (GameMode::getInstance()->getMode())
