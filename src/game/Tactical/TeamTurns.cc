@@ -1,4 +1,5 @@
 #include "LoadSaveData.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "Timer_Control.h"
 #include "Types.h"
 #include "Soldier_Control.h"

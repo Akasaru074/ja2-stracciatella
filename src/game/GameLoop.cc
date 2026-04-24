@@ -259,12 +259,6 @@ catch (std::exception const& e)
 
 void SetPendingNewScreen(ScreenID const uiNewScreen)
 {
-	if (guiCurrentScreen == GAME_SCREEN && uiNewScreen != GAME_SCREEN && uiNewScreen != MSG_BOX_SCREEN)
-	{
-		SLOGI("TACTICAL ONLY MODE: Blocked screen transition from GAME_SCREEN to %d", uiNewScreen);
-		return;  
-	}
-
 	guiPendingScreen = uiNewScreen;
 }
 

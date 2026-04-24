@@ -24,7 +24,7 @@
 #include "Shading.h"
 #include "VSurface.h"
 #include "GameMode.h"
-
+#include "Tactical/TwoPlayerTest.h"
 #include "EditScreen.h"
 #include "Logger.h"
 
