@@ -1,68 +1,99 @@
+// TwoPlayerTest.cc
+// Initializes a "from scratch" two-player hotseat sandbox:
+//   - Loads A10 Omerta basement (SGPSector 10,1,1)
+//   - Creates two AIM mercs (Barry & Blood) in the center of the room
+//   - Merc 1 → Squad 0 (FIRST_SQUAD), Merc 2 → Squad 1 (SECOND_SQUAD)
+//   - Both start on OUR_TEAM; the EndTurn logic in TeamTurns.cc handles
+//     team-swapping between squads for hotseat PvP.
+
 #include "TwoPlayerTest.h"
-#include "Soldier_Control.h"
-#include "Interface.h"
-#include "Overhead.h"
-#include "TeamTurns.h"
-#include "OppList.h"
 
-bool   TwoPlayerTest::bActive = false;
-UINT8  TwoPlayerTest::ubCurrentPlayer = 0;
-UINT8  TwoPlayerTest::ubMerc1ID = 0;
-UINT8  TwoPlayerTest::ubMerc2ID = 0;
+// Strategic / world
+#include "Game_Init.h"        // InitStrategicLayer()
+#include "StrategicMap.h"     // SetCurrentWorldSector(), gWorldSector, SGPSector
+#include "Strategic.h"        // INSERTION_CODE_CENTER
+#include "Game_Clock.h"       // InitNewGameClock()
 
-void TwoPlayerTest::Init() {
-	SOLDIERTYPE* pMerc1 = NULL;
-	SOLDIERTYPE* pMerc2 = NULL;
-	int count = 0;
+// Soldiers & squads
+#include "Soldier_Create.h"   // SOLDIERCREATE_STRUCT, TacticalCreateSoldier()
+#include "Soldier_Add.h"      // AddSoldierToSector()
+#include "Soldier_Profile.h"  // GetProfile(), LoadMercProfiles(), BARRY, BLOOD
+#include "Squads.h"           // AddCharacterToSquad(), FIRST_SQUAD, SECOND_SQUAD
+#include "Overhead.h"         // gTacticalStatus, OUR_TEAM, OppList helpers
+#include "Overhead_Types.h"   // TacticalStatusType flags
 
-	FOR_EACH_IN_TEAM(s, OUR_TEAM) {
-		if (!s->bInSector) continue;
-		if (count == 0) pMerc1 = s;
-		else if (count == 1) pMerc2 = s;
-		else break;
-		count++;
-	}
+// Misc
+#include "SaveLoadGameStates.h"  // ResetGameStates()
+#include "Tactical_Save.h"       // InitTacticalSave()
+#include "OppList.h"             // InitOppList()
+#include "Interface.h"           // SetCurrentInterfacePanel(), TEAM_PANEL
+#include "GameSettings.h"        // gGameOptions
 
-	if (count < 2) return;
+bool gfTwoPlayerSandboxMode = false;
 
-	ubMerc1ID = pMerc1->ubID;
-	ubMerc2ID = pMerc2->ubID;
+// ---------------------------------------------------------------------------
+// The A10 basement sector (x=10, y=1, z=1 == "A10 B1")
+static const SGPSector SANDBOX_SECTOR(10, 1, 1);
 
-	pMerc2->bTeam = ENEMY_TEAM;
-	pMerc2->bSide = Side::ENEMY;
+// ---------------------------------------------------------------------------
+// Helper: build a SOLDIERCREATE_STRUCT for a profiled AIM merc and place him
+// in SANDBOX_SECTOR using the center insertion point.
+static SOLDIERTYPE* CreateSandboxMerc(ProfileID profileID)
+{
+    SOLDIERCREATE_STRUCT cs{};
+    cs.bTeam            = OUR_TEAM;
+    cs.ubProfile        = profileID;
+    cs.fCopyProfileItemsOver = TRUE; 
+    cs.sSector          = SANDBOX_SECTOR;
+    cs.bDirection       = NORTHEAST;
+    cs.sInsertionGridNo = -1;
 
-	pMerc1->bOppList[ubMerc2ID] = NOT_HEARD_OR_SEEN;
-	pMerc2->bOppList[ubMerc1ID] = NOT_HEARD_OR_SEEN;
-
-	if (!(gTacticalStatus.uiFlags & INCOMBAT)) {
-		EnterCombatMode(OUR_TEAM);
-	}
-
-	bActive = true;
-	ubCurrentPlayer = 0;
+    SOLDIERTYPE* const s = TacticalCreateSoldier(cs);
+    if (s)
+    {
+        s->ubStrategicInsertionCode = INSERTION_CODE_CENTER;
+        s->usStrategicInsertionData = 0;
+    }
+    return s;
 }
 
-void TwoPlayerTest::OnEndTurn() {
-	if (!bActive) return;
+// ---------------------------------------------------------------------------
+void InitTwoPlayerSandbox()
+{
+    // 1. Minimal game-state reset (mirrors what ReStartingGame / LoadSavedGame do)
+    ResetGameStates();
+    InitTacticalSave();
+    LoadMercProfiles();
 
-	SOLDIERTYPE& igor = GetMan(ubMerc1ID);
-	SOLDIERTYPE& sdoba = GetMan(ubMerc2ID);
+    // 2. Initialise the strategic layer (squads, clock, campaign structures …)
+    InitStrategicLayer();
 
-	if (ubCurrentPlayer == 0) {
-		gTacticalStatus.ubCurrentTeam = ENEMY_TEAM;
-		sdoba.bActionPoints = sdoba.bInitialActionPoints;
-		g_selected_man = &sdoba;
-		SetCurrentTacticalPanelCurrentMerc(&sdoba);
-		ubCurrentPlayer = 1;
-	}
-	else {
-		gTacticalStatus.ubCurrentTeam = OUR_TEAM;
-		igor.bActionPoints = igor.bInitialActionPoints;
-		SelectSoldier(&igor, SELSOLDIER_NONE);
-		ubCurrentPlayer = 0;
-	}
-}
+    // 3. Mark game as started so screens don't try to go to laptop, etc.
+    gTacticalStatus.fHasAGameBeenStarted = TRUE;
+    gfTwoPlayerSandboxMode = true;
 
-bool TwoPlayerTest::IsActive() {
-	return bActive;
+    SOLDIERTYPE* const merc1 = CreateSandboxMerc(BARRY);
+    if (merc1)
+    {
+        AddCharacterToSquad(merc1, FIRST_SQUAD);
+    }
+
+    SOLDIERTYPE* const merc2 = CreateSandboxMerc(BLOOD);
+    if (merc2)
+    {
+        AddCharacterToSquad(merc2, SECOND_SQUAD);
+        
+        merc2->bTeam = ENEMY_TEAM;
+        merc2->bSide = Side::ENEMY;
+        
+        RemoveManFromTeam(OUR_TEAM);
+        AddManToTeam(ENEMY_TEAM);
+    }
+
+    // 6. Load the sector – this triggers UpdateMercsInSector() which places
+    //    both soldiers on the map using their INSERTION_CODE_CENTER setting.
+    SetCurrentWorldSector(SANDBOX_SECTOR);
+
+
+    SetCurrentInterfacePanel(TEAM_PANEL);
 }

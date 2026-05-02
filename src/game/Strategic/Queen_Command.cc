@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "Creature_Spreading.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "LoadSaveUndergroundSectorInfo.h"
 #include "Queen_Command.h"
 #include "Overhead_Types.h"
@@ -555,6 +556,8 @@ static void PrepareEnemyForUndergroundBattle()
 //The queen AI layer must process the event by subtracting forces, etc.
 void ProcessQueenCmdImplicationsOfDeath(const SOLDIERTYPE* const pSoldier)
 {
+	if (gfTwoPlayerSandboxMode) return;
+
 	EvaluateDeathEffectsToSoldierInitList(*pSoldier);
 
 	switch( pSoldier->ubProfile )

@@ -1,4 +1,5 @@
 #include "Directories.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "EDT.h"
 #include "Font.h"
 #include "HImage.h"
@@ -311,6 +312,8 @@ void InitHelpScreenSystem()
 
 BOOLEAN ShouldTheHelpScreenComeUp(HelpScreenID const ubScreenID, BOOLEAN const fForceHelpScreenToComeUp)
 {
+	if (gfTwoPlayerSandboxMode) return FALSE;
+
 	//if the screen is being forsced to come up ( user pressed 'h' )
 	if( fForceHelpScreenToComeUp )
 	{

@@ -1,4 +1,5 @@
 #include "Interface_Panels.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "Animation_Control.h"
 #include "Assignments.h"
 #include "Boxing.h"
@@ -3759,6 +3760,8 @@ static void AbandonBoxingCallback(MessageBoxReturnValue const ubExitValue)
 
 void GoToMapScreenFromTactical(void)
 {
+	if (gfTwoPlayerSandboxMode) return;
+
 	if ( gTacticalStatus.bBoxingState != NOT_BOXING )
 	{
 		// pop up dialogue asking whether the player wants to abandon the fight

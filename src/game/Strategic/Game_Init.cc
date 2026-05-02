@@ -61,6 +61,7 @@
 #include "Timer_Control.h"
 #include "Vehicles.h"
 #include "WorldDef.h"
+#include "TwoPlayerTest.h"
 #include <stdexcept>
 #include <string_theory/format>
 
@@ -202,6 +203,20 @@ void InitNewGame()
 	SetSelectedMan(0);
 
 	RESET_CHEAT_LEVEL();
+	
+	if (gfTwoPlayerSandboxMode)
+	{
+		if (gubScreenCount == 0)
+		{
+			InitScriptingEngine();
+			InitTwoPlayerSandbox();
+
+			// Go straight to tactical – no laptop, no map screen
+			SetPendingNewScreen(GAME_SCREEN);
+			gubScreenCount = 2; // skip screen-count steps
+		}
+		return;
+	}
 
 	if (gubScreenCount == 0)
 	{
