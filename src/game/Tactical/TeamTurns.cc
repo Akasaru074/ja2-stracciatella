@@ -12,6 +12,7 @@
 #include "Isometric_Utils.h"
 #include "Font_Control.h"
 #include "AI.h"
+#include "TacticalNetwork.h"
 #include "Message.h"
 #include "Text.h"
 #include "TeamTurns.h"
@@ -215,7 +216,7 @@ void EndTurn( UINT8 ubNextTeam )
 
 			RebuildCurrentSquad();
 		}
-
+		gNetwork.LogEvent("END_TURN", merc1->ubID, merc2->ubID);
 		return;
 	}
 

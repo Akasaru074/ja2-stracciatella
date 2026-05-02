@@ -39,6 +39,7 @@ set(JA2_SOURCES "")
 add_and_include_subdirectory(externalized)
 add_and_include_subdirectory(game)
 add_and_include_subdirectory(sgp)
+add_and_include_subdirectory(network)
 
 target_sources(${JA2_BINARY} PRIVATE ${JA2_SOURCES})
 

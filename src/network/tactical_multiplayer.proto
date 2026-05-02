@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package ja2.tactical;
+
+message Vec3 {
+    float x = 1;
+    float y = 2;  
+    float z = 3;
+}
+
+// только визуально видимый инвентарь (что в ручках у мерка)
+message SoldierGear {
+    uint32 hand_item = 1;       
+    uint32 second_hand_item = 2; 
+}
+
+// предмет на земле
+message GroundItem {
+    uint32 item_id = 1;
+    int32 grid_no = 2;
+    uint32 quantity = 3;
+    int32 status = 4;
+}
+
+//состояние солдата
+message SoldierState {
+    uint32 id = 1;
+    
+    Vec3 position = 2;
+    int32 grid_no = 3;
+    uint32 direction = 4;
+    int32 level = 5;
+    
+    uint32 anim_state = 6;
+    uint32 anim_frame = 7;
+    
+    int32 life = 8;
+    int32 action_points = 9;
+    int32 breath = 10;
+    
+    uint32 status_flags = 11;
+    int32 stance = 12;          
+    
+    SoldierGear gear = 13;
+    
+    // для врагов: true только если сейчас виден игроку
+    bool is_visible = 14;
+}
+
+// события (пока самое базовое, наверное что-то надо будет добавлять)
+enum EventType {
+    SHOOT = 0;
+    DEATH = 1;
+    END_TURN = 2;
+    ITEM_DROPPED = 3;
+    ITEM_PICKED_UP = 4;
+    MOVE = 5;
+    CHANGE_STANCE = 6;
+}
+
+message GameEvent {
+    uint64 timestamp = 1;
+    EventType type = 2;
+    
+    // кто сделал действие
+    uint32 soldier_id = 3;
+    
+    // для выстрела
+    int32 target_grid_no = 4;
+    uint32 target_id = 5;
+    
+    // для смерти/дропа
+    repeated GroundItem items = 6;
+    
+    // конец хода
+    uint32 next_team = 7;
+    
+    // движение
+    int32 dest_grid_no = 8;
+    
+    // смена стойки
+    int32 new_stance = 9;
+}
+
+message Frame {
+    uint32 tick = 1;
+    repeated SoldierState soldiers = 2;
+    repeated GroundItem ground_items = 3; // все предметы на земле
+}
+
+service TacticalCombat {
+    rpc SyncBattle(stream Frame) returns (stream Frame);
+    rpc SendEvent(GameEvent) returns (GameEvent);
+}

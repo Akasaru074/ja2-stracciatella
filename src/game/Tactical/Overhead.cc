@@ -16,6 +16,7 @@
 #include "Exit_Grids.h"
 #include "Explosion_Control.h"
 #include "Faces.h"
+#include "TacticalNetwork.h"
 #include "Font_Control.h"
 #include "FOV.h"
 #include "Game_Clock.h"
@@ -315,11 +316,13 @@ void InitTacticalEngine()
 
 	OnStructureDamaged.addListener("default:brothel", HandleBrothelWallDestroyed);
 	BeforeStructureDamaged.addListener("default", HandleStatueDamaged);
+	gNetwork.Init();
 }
 
 
 void ShutdownTacticalEngine(void)
 {
+	gNetwork.Close();
 	DeleteSpreadBurstGraphics();
 	DeleteFacesGraphics();
 	DeleteDialogueControlGraphics();
@@ -1054,6 +1057,23 @@ void ExecuteOverhead(void)
 				}
 			}
 		}
+
+		for (UINT32 i = 0; i < MercSlots.size(); i++) {
+			SOLDIERTYPE* pSol = MercSlots[i];
+			if (pSol) {
+				gNetwork.LogSoldier(
+					pSol->ubID,
+					(float)pSol->dXPos,
+					(float)pSol->dYPos,
+					pSol->sGridNo,
+					pSol->bLife,
+					pSol->bActionPoints,
+					pSol->inv[HANDPOS].usItem,
+					gAnimControl[pSol->usAnimState].ubEndHeight
+				);
+			}
+		}
+		gNetwork.EndFrame();
 
 		if (!AwaySlots.empty() &&
 				!gfPauseAllAI &&

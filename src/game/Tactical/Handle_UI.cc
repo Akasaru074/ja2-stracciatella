@@ -8,6 +8,7 @@
 #include "Turn_Based_Input.h"
 #include "Touch_UI.h"
 #include "Soldier_Find.h"
+#include "TacticalNetwork.h"
 #include "JAScreens.h"
 #include "PathAI.h"
 #include "Soldier_Control.h"
@@ -2300,7 +2301,7 @@ static ScreenID UIHandleCAMercShoot(UI_EVENT* pUIEvent)
 	}
 
 	UIHandleMercAttack(sel, tgt, usMapPos);
-
+	gNetwork.LogEvent("SHOOT", sel->ubID, tgt ? tgt->ubID : 0);
 	return( GAME_SCREEN );
 }
 
