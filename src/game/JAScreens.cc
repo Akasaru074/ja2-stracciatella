@@ -30,6 +30,7 @@
 #include "Timer.h"
 #include "Logger.h"
 #include "WordWrap.h"
+#include "TwoPlayerTest.h"
 
 #include <string_theory/format>
 #include <string_theory/string>

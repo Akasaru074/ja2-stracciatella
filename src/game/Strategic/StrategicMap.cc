@@ -4,6 +4,7 @@
 #include "Ambient_Control.h"
 #include "Animated_ProgressBar.h"
 #include "Animation_Control.h"
+#include "Tactical/TwoPlayerTest.h"
 #include "Assignments.h"
 #include "Auto_Resolve.h"
 #include "Boxing.h"
@@ -2029,6 +2030,8 @@ static BOOLEAN SoldierOKForSectorExit(SOLDIERTYPE* pSoldier, INT8 bExitDirection
 //ATE: Returns FALSE if NOBODY is close enough, 1 if ONLY selected guy is and 2 if all on squad are...
 BOOLEAN OKForSectorExit( INT8 bExitDirection, UINT16 usAdditionalData, UINT32 *puiTraverseTimeInMinutes )
 {
+	if (gfTwoPlayerSandboxMode) return FALSE;
+
 	BOOLEAN     fAtLeastOneMercControllable = FALSE;
 	BOOLEAN     fOnlySelectedGuy = FALSE;
 	SOLDIERTYPE *pValidSoldier = NULL;
