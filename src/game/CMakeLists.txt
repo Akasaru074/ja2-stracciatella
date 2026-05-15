@@ -5,6 +5,7 @@ add_and_include_subdirectory("Tactical")
 add_and_include_subdirectory("TacticalAI")
 add_and_include_subdirectory("TileEngine")
 add_and_include_subdirectory("Utils")
+add_and_include_subdirectory("Multiplayer")
 
 file(GLOB LOCAL_JA2_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 set(LOCAL_JA2_SOURCES
