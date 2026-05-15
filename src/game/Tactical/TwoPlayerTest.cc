@@ -12,11 +12,9 @@
 #include "Game_Init.h"        // InitStrategicLayer()
 #include "StrategicMap.h"     // SetCurrentWorldSector(), gWorldSector, SGPSector
 #include "Strategic.h"        // INSERTION_CODE_CENTER
-#include "Game_Clock.h"       // InitNewGameClock()
 
 // Soldiers & squads
 #include "Soldier_Create.h"   // SOLDIERCREATE_STRUCT, TacticalCreateSoldier()
-#include "Soldier_Add.h"      // AddSoldierToSector()
 #include "Soldier_Profile.h"  // GetProfile(), LoadMercProfiles(), BARRY, BLOOD
 #include "Squads.h"           // AddCharacterToSquad(), FIRST_SQUAD, SECOND_SQUAD
 #include "Overhead.h"         // gTacticalStatus, OUR_TEAM, OppList helpers
@@ -25,9 +23,7 @@
 // Misc
 #include "SaveLoadGameStates.h"  // ResetGameStates()
 #include "Tactical_Save.h"       // InitTacticalSave()
-#include "OppList.h"             // InitOppList()
 #include "Interface.h"           // SetCurrentInterfacePanel(), TEAM_PANEL
-#include "GameSettings.h"        // gGameOptions
 
 bool gfTwoPlayerSandboxMode = false;
 

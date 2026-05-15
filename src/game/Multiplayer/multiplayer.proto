@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package ja2.multiplayer;
+
+// Сервис для общения между Host (Server) и Client
+service MultiplayerGame {
+  // Клиент подключается к хосту и получает начальный стейт
+  rpc JoinMatch (JoinRequest) returns (MatchState);
+
+  // Клиент отправляет свои клики (инпуты) на хост
+  rpc SendInput (PlayerInput) returns (InputResponse);
+
+  // Клиент слушает поток ивентов от хоста (перемещения, выстрелы и т.д.)
+  rpc StateStream (StreamRequest) returns (stream StateEvent);
+}
+
+// Запрос на подключение
+message JoinRequest {
+  string player_name = 1;
+}
+
+// Начальное состояние матча (используется для инициализации песочницы)
+message MatchState {
+  bool success = 1;
+  string message = 2;
+  uint32 random_seed = 3;  // Зерно для синхронизации RNG, если нужно
+  uint32 host_team = 4;    // Команда хоста (0 = OUR_TEAM, 1 = ENEMY_TEAM)
+  uint32 client_team = 5;  // Команда клиента
+}
+
+// Запрос для потока событий (пустой)
+message StreamRequest {
+}
+
+// Типы инпутов от игрока
+enum InputType {
+  INPUT_NONE = 0;
+  INPUT_MOVE = 1;
+  INPUT_SHOOT = 2;
+  INPUT_CHANGE_STANCE = 3;
+  INPUT_END_TURN = 4;
+}
+
+// Пакет ввода от клиента
+message PlayerInput {
+  InputType type = 1;
+  uint32 merc_net_id = 2; // Сетевой ID мерка, выполняющего действие
+  uint32 target_grid_no = 3; // Целевая клетка (для стрельбы/бега)
+  int32 param = 4; // Дополнительный параметр (например, новая стойка)
+}
+
+message InputResponse {
+  bool accepted = 1;
+}
+
+// Типы событий, которые рассылает сервер
+enum EventType {
+  EVENT_NONE = 0;
+  EVENT_MERC_MOVED = 1;
+  EVENT_MERC_SHOT = 2;
+  EVENT_MERC_DAMAGED = 3;
+  EVENT_MERC_STANCE_CHANGED = 4;
+  EVENT_TURN_CHANGED = 5;
+}
+
+// Пакет события от сервера
+message StateEvent {
+  EventType type = 1;
+  uint32 merc_net_id = 2;
+  uint32 target_grid_no = 3;
+  int32 param1 = 4; // Различные параметры, зависящие от типа события
+  int32 param2 = 5; 
+}

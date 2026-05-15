@@ -192,6 +192,29 @@ if (WITH_UNITTESTS)
     target_compile_definitions(ja2 PRIVATE WITH_UNITTESTS)
 endif()
 
+find_package(Protobuf REQUIRED)
+find_package(gRPC REQUIRED)
+
+set(PROTO_FILE "${CMAKE_SOURCE_DIR}/src/game/Multiplayer/multiplayer.proto")
+set(PROTO_SRC "${CMAKE_CURRENT_BINARY_DIR}/multiplayer.pb.cc")
+set(PROTO_HEADER "${CMAKE_CURRENT_BINARY_DIR}/multiplayer.pb.h")
+set(GRPC_SRC "${CMAKE_CURRENT_BINARY_DIR}/multiplayer.grpc.pb.cc")
+set(GRPC_HEADER "${CMAKE_CURRENT_BINARY_DIR}/multiplayer.grpc.pb.h")
+
+add_custom_command(
+      OUTPUT "${PROTO_SRC}" "${PROTO_HEADER}" "${GRPC_SRC}" "${GRPC_HEADER}"
+      COMMAND protobuf::protoc
+      ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+        --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+        -I "${CMAKE_SOURCE_DIR}/src/game/Multiplayer"
+        --plugin=protoc-gen-grpc=$<TARGET_FILE:gRPC::grpc_cpp_plugin>
+        "${PROTO_FILE}"
+      DEPENDS "${PROTO_FILE}"
+)
+
+target_sources(${JA2_BINARY} PRIVATE ${PROTO_SRC} ${GRPC_SRC})
+target_include_directories(${JA2_BINARY} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+
 target_link_libraries(${JA2_BINARY} PRIVATE
     ${SDL2_LIBRARY}
     ${GTEST_LIBRARIES}
@@ -199,6 +222,8 @@ target_link_libraries(${JA2_BINARY} PRIVATE
     ${STRACCIATELLA_LIBRARIES}
     string_theory-internal
     lua
+    gRPC::grpc++
+    protobuf::libprotobuf
 )
 if (MINGW)
     target_link_libraries(${JA2_BINARY} PRIVATE ntdll)
